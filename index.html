@@ -1,29 +1,69 @@
 <!doctype html>
 <html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Generator Haszy Bcrypt</title>
-    <link rel="stylesheet" href="style.css" />
-    <!-- Biblioteka bcryptjs z CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
-  </head>
-  <body>
-    <div class="container">
-        <h2>Generator Haszy Bcrypt</h2>
-        
-        <div class="input-group">
-            <label for="passwordInput">Wpisz hasło:</label>
-            <input type="text" id="passwordInput" placeholder="np. TajneHaslo123">
-        </div>
 
-        <button id="hashButton" onclick="hashPassword()">Zahaszuj hasło</button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generator Haszy Bcrypt</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Biblioteka bcryptjs z CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+</head>
 
-        <div class="result-group">
-            <label>Wynik (Hash Bcrypt):</label>
-            <div id="resultBox" class="result-box">Tutaj pojawi się wynik...</div>
-        </div>
-        <script src="main.js"></script>
+<body>
+  <div class="container">
+    <h2>Generator Haszy Bcrypt</h2>
+
+    <div class="input-group">
+      <label for="passwordInput">Wpisz hasło:</label>
+      <input type="text" id="passwordInput" placeholder="np. TajneHaslo123" />
     </div>
-  </body>
+
+    <button id="hashButton" onclick="hashPassword()">Zahaszuj hasło</button>
+
+    <div class="result-group">
+      <label>Wynik (Hash Bcrypt):</label>
+      <div id="resultBox" class="result-box">Tutaj pojawi się wynik...</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h3>Symulator Szukania Siłowego (Brute-Force)</h3>
+
+    <!-- Pole: ile znaków ma hasło -->
+    <div class="input-group">
+      <label for="passwordLength">Maksymalna długość hasła (zalecane max 3-4):</label>
+      <input type="number" id="passwordLength" value="3" min="1" max="5" />
+    </div>
+
+    <!-- Pole: jakich liter/znaków użyć -->
+    <div class="input-group">
+      <label>Wybierz zestawy znaków do poszukiwań:</label>
+      <div><input type="checkbox" id="useLower" checked /> Małe litery
+        (a-z)</label>
+        <label><input type="checkbox" id="useUpper" checked /> Duże litery
+          (A-Z)</label>
+        <label><input type="checkbox" id="useNumbers" checked /> Cyfry
+          (0-9)</label>
+        <label><input type="checkbox" id="useSpecial" /> Znaki specjalne
+          (!@#$...)</label>
+      </div>
+    </div>
+
+    <!-- Przycisk szukaj hasła -->
+    <button id="bruteButton" onclick="bruteForceHash()">
+      Szukaj hasła
+    </button>
+
+    <!-- Pole wynik: znalezione hasło -->
+    <div class="result-group">
+      <label>Wynik (Znalezione hasło):</label>
+      <div id="bruteResultBox" class="result-box" style="color: #dc3545">
+        Oczekiwanie na start...
+      </div>
+    </div>
+  </div>
+  <script src="main.js"></script>
+</body>
+
 </html>
