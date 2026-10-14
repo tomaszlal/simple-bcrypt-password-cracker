@@ -1,6 +1,6 @@
-const passwordInput = document.getElementById('passwordInput');
-const resultBox = document.getElementById('resultBox');
-const bruteResultBox = document.getElementById('bruteResultBox');
+const passwordInput = document.getElementById("passwordInput");
+const resultBox = document.getElementById("resultBox");
+const bruteResultBox = document.getElementById("bruteResultBox");
 const bcrypt = dcodeIO.bcrypt;
 
 function hashPassword() {
@@ -16,25 +16,100 @@ function hashPassword() {
     sha256Hash(password);
 }
 
-function bcryptHash(password) {
-    bcrypt.hash(password, 10, (err, hash) => {
-        console.log(hash);
-        resultBox.textContent = hash;
-        previousHash = "$2a$10$oOzmnIU1IXgQJaWL0Y8kLOJgqDqmG.TiGEoycxaReXgP/zKuwhNku";
-        bcrypt.compare(password, previousHash, (err, res) => {
-            if (res) {
-                console.log("Sukces! Hasła są identyczne.");
-            } else {
-                console.log("Błąd! Niepoprawne hasło.");
-            }
-        });
-    });
-}
-
 function sha256Hash(password) {
     const hash = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
     console.log(hash);
     resultBox.textContent = hash;
+}
+
+function bruteForceHashByFor() {
+    if (resultBox.textContent.length < 60) {
+        resultBox.textContent = "Najpierw wygeneruj hash!";
+        return;
+    }
+
+    const targetHash = resultBox.textContent;
+    console.log(`Target: ${targetHash}`);
+    // const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    // const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+    const smallCharset = "abcdefghijklmnopqrstuvwxyz";
+    const bigCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numberCharset = "0123456789";
+    const specialCharset = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+    const charset = smallCharset;// + bigCharset + numberCharset + specialCharset;
+
+
+    // Start time for performance measurement
+    const startTime = Date.now();
+    const startDateObj = new Date(startTime);
+    console.log(`Start szukania: ${startDateObj.toLocaleTimeString()}`);
+
+    // Lengh 1 (1 loop - 1 character)
+    for (let i = 0; i < charset.length; i++) {
+        let p = charset[i];
+        if (check(p, targetHash, startTime)) return;
+    }
+
+    // Lengh 2 (2 loops - 2 character)
+    for (let i = 0; i < charset.length; i++) {
+        for (let j = 0; j < charset.length; j++) {
+            let p = charset[i] + charset[j];
+            if (check(p, targetHash, startTime)) return;
+        }
+    }
+
+    // Lengh 3 (3 loops - 3 characters))
+    for (let i = 0; i < charset.length; i++) {
+        for (let j = 0; j < charset.length; j++) {
+            for (let k = 0; k < charset.length; k++) {
+                let p = charset[i] + charset[j] + charset[k];
+                if (check(p, targetHash, startTime)) return;
+            }
+        }
+    }
+
+    // Lengh 4 (4 loops - 4 characters)
+    for (let i = 0; i < charset.length; i++) {
+        for (let j = 0; j < charset.length; j++) {
+            for (let k = 0; k < charset.length; k++) {
+                for (let l = 0; l < charset.length; l++) {
+                    let p = charset[i] + charset[j] + charset[k] + charset[l];
+                    if (check(p, targetHash, startTime)) return;
+                }
+            }
+        }
+    }
+
+    // Lengh 5 (5 loops - 5 characters)
+    for (let i = 0; i < charset.length; i++) {
+        for (let j = 0; j < charset.length; j++) {
+            for (let k = 0; k < charset.length; k++) {
+                for (let l = 0; l < charset.length; l++) {
+                    for (let m = 0; m < charset.length; m++) {
+                        let p = charset[i] + charset[j] + charset[k] + charset[l] + charset[m];
+                        if (check(p, targetHash, startTime)) return;
+                    }
+                }
+            }
+        }
+    }
+
+
+    console.log("Nie znaleziono hasła.");
+    bruteResultBox.textContent = `Nie znaleziono hasła.`;
+}
+
+function check(password, targetHash, startTime) {
+    const hash = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+    if (hash === targetHash) {
+        bruteResultBox.textContent = `Znaleziono hasło: ${password}`;
+        const endTime = Date.now();
+        const durationInSeconds = ((endTime - startTime) / 1000).toFixed(3);
+        console.log(`Target: ${targetHash}, Hash from password: ${hash}`);
+        console.log(`Czas szukania: ${durationInSeconds} sekund`);
+        return true;
+    }
+    return false;
 }
 
 function bruteForceHash() {
@@ -73,76 +148,17 @@ function bruteForceHash() {
     generatePasswords("");
 }
 
-
-function bruteForceHashByFor() {
-     if (resultBox.textContent.length < 60) {
-        resultBox.textContent = "Najpierw wygeneruj hash!";
-        return;
-    }
-
-    const targetHash = resultBox.textContent; // Hash, whitch we want to crack
-    console.log(`Target: ${targetHash}`);
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Characters to use for password generation
-    const maxLength = 4; // Max of characters in password
-
-    let currentPassword = "";
-
-    for (let len = 1; len <= maxLength; len++) {
-
-        for (let i = 0; i < charset.length; i++) {
-            currentPassword = charset[i];
-        }
-
-    }
-
+function bcryptHash(password) {
+    bcrypt.hash(password, 10, (err, hash) => {
+        console.log(hash);
+        resultBox.textContent = hash;
+        previousHash = "$2a$10$oOzmnIU1IXgQJaWL0Y8kLOJgqDqmG.TiGEoycxaReXgP/zKuwhNku";
+        bcrypt.compare(password, previousHash, (err, res) => {
+            if (res) {
+                console.log("Sukces! Hasła są identyczne.");
+            } else {
+                console.log("Błąd! Niepoprawne hasło.");
+            }
+        });
+    });
 }
-
-//TODO: to analyze and change on for.
-// function bruteForceHash() {
-//     if (resultBox.textContent.length < 60) {
-//         resultBox.textContent = "Najpierw wygeneruj hash!";
-//         return;
-//     }
-
-//     const targetHash = resultBox.textContent; // Hash, który chcemy złamać
-//     console.log(`Target: ${targetHash}`);
-//     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Znaki
-//     const maxLength = 4; // Maksymalna długość hasła
-
-//     // Przechodzimy przez każdą możliwą długość hasła od 1 do maxLength
-//     for (let len = 1; len <= maxLength; len++) {
-//         // Tworzymy tablicę indeksów dla aktualnej długości (np. [0, 0, 0, 0])
-//         const indices = new Array(len).fill(0);
-//         const maxCombinations = Math.pow(charset.length, len);
-
-//         // Pętla iterująca po wszystkich kombinacjach dla danej długości
-//         for (let i = 0; i < maxCombinations; i++) {
-//             // Składamy hasło z aktualnych indeksów
-//             let currentPassword = "";
-//             for (let j = 0; j < len; j++) {
-//                 currentPassword += charset[indices[j]];
-//             }
-
-//             // Sprawdzamy hash
-//             const hash = CryptoJS.SHA256(currentPassword).toString(CryptoJS.enc.Hex);
-//             if (hash === targetHash) {
-//                 bruteResultBox.textContent = `Znaleziono hasło: ${currentPassword}`;
-//                 console.log(`Target: ${targetHash}, Hash from password: ${hash}`);
-//                 return; // Przerywamy całą funkcję po znalezieniu hasła
-//             }
-
-//             // Inkrementujemy indeksy (odpowiednik "licznika kilometrów")
-//             let idx = len - 1;
-//             while (idx >= 0) {
-//                 indices[idx]++;
-//                 if (indices[idx] < charset.length) {
-//                     break; // Jeśli nie wyszliśmy poza zakres alfabetu, przerywamy pętlę inkrementacji
-//                 }
-//                 indices[idx] = 0; // Resetujemy i przechodzimy do poprzedniego znaku (przeniesienie)
-//                 idx--;
-//             }
-//         }
-//     }
-    
-//     console.log("Nie znaleziono hasła w zadanym zakresie.");
-// }

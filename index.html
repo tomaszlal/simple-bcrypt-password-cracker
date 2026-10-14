@@ -15,7 +15,7 @@
 
 <body>
   <div class="container">
-    <h2>Generator Haszy Bcrypt</h2>
+    <h2>Generator Haszy SHA-512</h2>
 
     <div class="input-group">
       <label for="passwordInput">Wpisz hasło:</label>
@@ -25,7 +25,7 @@
     <button id="hashButton" onclick="hashPassword()">Zahaszuj hasło</button>
 
     <div class="result-group">
-      <label>Wynik (Hash Bcrypt):</label>
+      <label>Wynik (Hash SHA-512):</label>
       <div id="resultBox" class="result-box">Tutaj pojawi się wynik...</div>
     </div>
   </div>
@@ -54,7 +54,7 @@
     </div>
 
     <!-- Przycisk szukaj hasła -->
-    <button id="bruteButton" onclick="bruteForceHash()">
+    <button id="bruteButton" onclick="bruteForceHashByFor()">
       Szukaj hasła
     </button>
 
